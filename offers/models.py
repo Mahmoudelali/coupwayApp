@@ -4,25 +4,43 @@ from companies.models import Company, Location
 from django.contrib.auth.models import User
 
 
-class Subcategory(models.Model):
-    name = models.CharField(max_length=50)
+# class Subcategory(models.Model):
+#     name = models.CharField(max_length=50)
 
-    class Meta:
-        # this goes for plural queryset name in db retrieving
-        verbose_name_plural = "subcategories"
+#     class Meta:
+#         # this goes for plural queryset name in db retrieving
+#         verbose_name_plural = "subcategories"
 
-    def __str__(self) -> str:
+#     def __str__(self) -> str:
+#         return self.name
+
+
+# class Category(models.Model):
+#     name = models.CharField(max_length=50)
+#     Subcategories = models.ForeignKey(Subcategory, on_delete=models.CASCADE, null=True)
+
+#     class Meta:
+#         verbose_name_plural = "categories"
+
+#     def __str__(self) -> str:
+#         return self.name
+
+
+# v2
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
         return self.name
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=50)
-    Subcategories = models.ForeignKey(Subcategory, on_delete=models.CASCADE, null=True)
+class SubCategory(models.Model):
+    name = models.CharField(max_length=100)
+    category = models.ForeignKey(
+        Category, related_name="subcategories", on_delete=models.CASCADE
+    )
 
-    class Meta:
-        verbose_name_plural = "categories"
-
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
 
 
@@ -52,14 +70,14 @@ class Offer(models.Model):
     new_price = models.FloatField()
 
     # make this a list maybe we need category
-    category = models.ManyToManyField(Category)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     isVip = models.BooleanField()
 
     # a single user cannot take multiple coupons of a unique offer
     is_unique = models.BooleanField(default=False)
 
     # Subcategory connected to the offer
-    sub = models.ManyToManyField(Subcategory)
+    # sub = models.ManyToManyField(Subcategory)
 
     def make_order(self, coupons_to_order):
         self.coupons -= int(coupons_to_order)

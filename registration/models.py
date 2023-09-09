@@ -1,12 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-from offers.models import Location, Subcategory, Category
+from offers.models import Location, Category
 
 
 class Preferences(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     prefered_categories_ids = models.ManyToManyField(Category)
-    prefered_subcategories_ids = models.ManyToManyField(Subcategory)
+    # prefered_subcategories_ids = models.ManyToManyField(Subcategory)
 
 
 class AdditionalUserInfo(models.Model):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from offers.models import Offer, OfferDate, Category, Subcategory, Pictures, Feedbacks
+from offers.models import Offer, OfferDate, Category, Pictures, Feedbacks, SubCategory
 from companies.models import Location, Company
 from orders.models import Order
 from registration.models import AdditionalUserInfo
@@ -42,18 +42,18 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
 
-class SubcategorySerializer(serializers.ModelSerializer):
+class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Subcategory
-        fields = "__all__"
+        model = SubCategory
+        fields = ["name"]
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    Subcategories = SubcategorySerializer()
+    subcategories = SubCategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Category
-        fields = ["id", "name", "Subcategories"]
+        fields = ["id", "name", "subcategories"]
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -100,8 +100,8 @@ class FeedbackSerializer(serializers.ModelSerializer):
 class SingleOfferSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
     company = CompanySerializer()
-    category = CategorySerializer(many=True)
-    feedback = FeedbackSerializer(many=True, default="")
+    category = CategorySerializer()
+    feedback = FeedbackSerializer(many=True, allow_null=True)
 
     class Meta:
         model = Offer
