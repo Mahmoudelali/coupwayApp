@@ -45,7 +45,7 @@ class CompanySerializer(serializers.ModelSerializer):
 class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
-        fields = ["name"]
+        fields = ["name", "id"]
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -78,6 +78,7 @@ class OffersSerializer(serializers.ModelSerializer):
             "id",
             "location",
             "company",
+            "main_picture",
         ]
 
 
@@ -97,15 +98,45 @@ class FeedbackSerializer(serializers.ModelSerializer):
         fields = ["id", "user_id", "feedback_content", "offer_id", "user"]
 
 
+class SingleOfferCategory(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
+
+
 class SingleOfferSerializer(serializers.ModelSerializer):
+    subcategory_names = serializers.SerializerMethodField()
     location = LocationSerializer()
     company = CompanySerializer()
-    category = CategorySerializer()
+    category = SingleOfferCategory()
+
     feedback = FeedbackSerializer(many=True, allow_null=True)
 
     class Meta:
         model = Offer
-        fields = "__all__"
+        fields = [
+            "id",
+            "title",
+            "coupons",
+            "working",
+            "main_picture",
+            "highlights",
+            "compensations",
+            "fine_print",
+            "description",
+            "company",
+            "location",
+            "old_price",
+            "feedback",
+            "new_price",
+            "category",
+            "isVip",
+            "is_unique",
+            "subcategory_names",
+        ]
+
+    def get_subcategory_names(self, obj):
+        return [subcategory.name for subcategory in obj.subcategories.all()]
 
 
 class PictureSerializer(serializers.ModelSerializer):

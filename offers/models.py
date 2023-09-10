@@ -70,7 +70,9 @@ class Offer(models.Model):
     new_price = models.FloatField()
 
     # make this a list maybe we need category
+    # category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
+    subcategories = models.ManyToManyField(SubCategory)
     isVip = models.BooleanField()
 
     # a single user cannot take multiple coupons of a unique offer
@@ -91,6 +93,9 @@ class Feedbacks(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     offer = models.ForeignKey(Offer, on_delete=models.PROTECT, null=True)
     feedback_content = models.CharField(max_length=500, null=True, blank=True)
+
+    def __str__(self) -> str:
+        return self.user.username
 
 
 # offer date is used by the views to determine if an offer is active or not
