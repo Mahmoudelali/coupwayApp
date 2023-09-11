@@ -30,6 +30,10 @@ class OrdersSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrdersListSerializer(serializers.ListSerializer):
+    child = OrdersSerializer()
+
+
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company

@@ -29,6 +29,7 @@ from .serializers import (
     LocationSerializer,
     OfferDateSerializer,
     OrdersSerializer,
+    OrdersListSerializer,
     UserInfoSerializer,
     SingleOfferSerializer,
     FeedbackSerializer,
@@ -256,34 +257,38 @@ def createOrder(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@permission_classes([IsAuthenticated])
-class CreateOrderView(generics.ListAPIView):
+# @permission_classes([IsAuthenticated])
+class CreateOrderView(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrdersSerializer
 
-    def post(self, request):
-        serializer = OrdersSerializer(data=request.data)
-        if serializer.is_valid():
-            offer_id = request.data["offer_id"]
-            offer = Offer.objects.get(id=offer_id)
-            if offer.is_unique and request.data["coupons_ordered"] > 1:
-                return Response(
-                    {"message": "You can't take multiple coupons of this order"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            offer_dates = OfferDate.objects.filter(offer_id=offer_id)
-            for offerdate in offer_dates:
-                offer_active = (
-                    offerdate.startdate <= timezone.now() <= offerdate.enddate
-                )
-                if not offer_active:
-                    offer.working = False
-                    offer.save()
-                offer.working = True
-            offer.make_order(coupons_to_order=request.data["coupons_ordered"])
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, format=None):
+        data = request.data  # This should be a list of dictionaries
+        serializer = OrdersSerializer(data=data, many=True)
+        for i in range(len(data)):
+            print(i)
+            if serializer.is_valid():
+                print(request.data)
+                offer_id = request.data[i]["offer_id"]
+                offer = Offer.objects.get(id=offer_id)
+                if offer.is_unique and int(request.data[i]["coupons_ordered"]) > 1:
+                    return Response(
+                        {"message": "You can't take multiple coupons of this order"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                offer_dates = OfferDate.objects.filter(offer_id=offer_id)
+                for offerdate in offer_dates:
+                    offer_active = (
+                        offerdate.startdate <= timezone.now() <= offerdate.enddate
+                    )
+                    if not offer_active:
+                        offer.working = False
+                        offer.save()
+                    offer.working = True
+                offer.make_order(coupons_to_order=request.data[i]["coupons_ordered"])
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # redeem order

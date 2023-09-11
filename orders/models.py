@@ -17,6 +17,9 @@ class Order(models.Model):
     is_gift = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
 
+    def __str__(self) -> str:
+        return self.user_id.username
+
     def redeem(self):
         self.redeemed = True
         self.is_active = False
