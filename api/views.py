@@ -21,6 +21,7 @@ from registration.models import AdditionalUserInfo
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
 from .serializers import (
     OffersSerializer,
     CompanySerializer,
@@ -42,6 +43,10 @@ def getOffers(request):
     serializer = OffersSerializer(products, many=True)
     return Response(serializer.data)
 
+def get_csrf_token(request):
+    # Obtain the CSRF token from the request context
+    csrf_token = request.META.get("CSRF_COOKIE")
+    return JsonResponse({"csrfToken": csrf_token})
 
 class SingleOfferView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Offer.objects.all()
