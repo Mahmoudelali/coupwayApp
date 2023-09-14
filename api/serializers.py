@@ -69,6 +69,7 @@ class LocationSerializer(serializers.ModelSerializer):
 class OffersSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
     company = CompanySerializer()
+    # remaining_coupons = serializers.SerializerMethodField(method_name="")
 
     # category = CategorySerializer(many=True)
 
@@ -81,6 +82,7 @@ class OffersSerializer(serializers.ModelSerializer):
             "new_price",
             "id",
             "location",
+            "isVip",
             "company",
             "main_picture",
         ]

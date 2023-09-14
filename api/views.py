@@ -327,10 +327,28 @@ def getUserProfile(request):
 # get orders
 
 
+# @login_required(login_url="/api/registration/accounts/login/")
+@permission_classes([IsAuthenticated])
+@api_view(["GET"])
+def getAllOrders(request):
+    orders = Order.objects.all()
+    serializer = OrdersSerializer(orders, many=True)
+    return Response(serializer.data)
+
+
+@permission_classes([IsAuthenticated])
+@api_view(["GET"])
+def getPendingOrders(request):
+    orders = Order.objects.filter(is_active=False)
+    serializer = OrdersSerializer(orders, many=True)
+    return Response(serializer.data)
+
+
 @login_required(login_url="/api/registration/accounts/login/")
 @api_view(["GET"])
-def getUserOrders(request):
-    orders = Order.objects.filter(user_id=request.user.id)
+def getUserOrders(request, pk):
+    print(request.user.id)
+    orders = Order.objects.filter(user_id=pk)
     serializer = OrdersSerializer(orders, many=True)
     return Response(serializer.data)
 
@@ -382,11 +400,54 @@ def rate_company(request, company_id, rate):
 # search
 
 
+# @api_view(["GET"])
+# def searchOffers(request, query):
+#     offers = Offer.objects.filter(Q(title__icontains=query) & Q(working=True))
+#     serializer = OffersSerializer(offers, many=True)
+#     return Response(serializer.data)
+
+
 @api_view(["GET"])
-def searchOffers(request, query):
-    offers = Offer.objects.filter(Q(title__icontains=query) & Q(working=True))
-    serializer = OffersSerializer(offers, many=True)
-    return Response(serializer.data)
+def searchOffers(request):
+    id = request.GET.get("id")
+    queryset = request.GET.get("queryset")
+    location = request.GET.get("location")
+
+    if request.GET is not None:
+        if location and queryset:
+            offers = (
+                Offer.objects.all()
+                .filter(Q(working=True))
+                .filter(Q(location__name__icontains=location))
+            ).filter(
+                Q(title=queryset)
+                | Q(category__name__icontains=queryset)
+                | Q(subcategories__name__icontains=queryset)
+            )
+            serializer = SingleOfferSerializer(offers, many=True)
+            return Response(serializer.data)
+        if location:
+            offers = (
+                Offer.objects.all()
+                .filter(Q(working=True))
+                .filter(Q(location__name__icontains=location))
+            )
+            serializer = SingleOfferSerializer(offers, many=True)
+            return Response(serializer.data)
+        else:
+            offers = (
+                Offer.objects.all()
+                .filter(Q(working=True))
+                .filter(
+                    Q(title__icontains=queryset)
+                    | Q(category__name__icontains=queryset)
+                    | Q(subcategories__name__icontains=queryset)
+                )
+            )
+            serializer = SingleOfferSerializer(offers, many=True)
+            return Response(serializer.data)
+    else:
+        return Response({"message": "No query parameter found."})
 
 
 from typing import TYPE_CHECKING, Any, Dict, Type

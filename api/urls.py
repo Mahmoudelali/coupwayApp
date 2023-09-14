@@ -42,14 +42,14 @@ urlpatterns = [
     ),
     path("activateorder/<int:id>/", views.activate_order, name="activate order"),
     path("getuserprofile/", views.getUserProfile, name="get user profile"),
-    path(
-        "getuserorders/", views.getUserOrders, name="get personal orders"
-    ),  # body : user_id
+    path("getuserorders/<int:pk>", views.getUserOrders, name="get personal orders"),
+    path("getallorders/", views.getAllOrders, name="get all orders"),
+    path("getpendingorders/", views.getPendingOrders, name="create order"),
     path("getusergifts/", views.getUserGifts, name="get user gifts"),
     path(
         "ratecompany/<int:company_id>/<int:rate>/",
         views.rate_company,
         name="rate a company",
     ),
-    path("searchoffers/<str:query>/", views.searchOffers, name="search offers"),
+    path("searchoffers/", views.searchOffers, name="search offers"),
 ]

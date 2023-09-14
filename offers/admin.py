@@ -20,4 +20,3 @@ admin.site.register(Pictures)
 admin.site.register(Company)
 admin.site.register(Feedbacks)
 admin.site.register(Order)
-
