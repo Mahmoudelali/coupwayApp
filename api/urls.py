@@ -52,4 +52,5 @@ urlpatterns = [
         name="rate a company",
     ),
     path("searchoffers/<str:query>/", views.searchOffers, name="search offers"),
+    path('get-csrf-token/', views.get_csrf_token, name='get_csrf_token'),
 ]
