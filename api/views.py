@@ -28,12 +28,11 @@ from .serializers import (
     # SubcategorySerializer,
     LocationSerializer,
     OfferDateSerializer,
-    OrdersSerializer,
-    OrdersListSerializer,
     UserInfoSerializer,
     SingleOfferSerializer,
     FeedbackSerializer,
 )
+from orders.serializers import OrdersListSerializer, OrdersSerializer
 
 
 @api_view(["GET"])
@@ -344,7 +343,7 @@ def getPendingOrders(request):
     return Response(serializer.data)
 
 
-@login_required(login_url="/api/registration/accounts/login/")
+# @login_required(login_url="/api/registration/accounts/login/")
 @api_view(["GET"])
 def getUserOrders(request, pk):
     print(request.user.id)

@@ -9,7 +9,7 @@ from io import BytesIO
 
 class Order(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    offer_id = models.ForeignKey(Offer, on_delete=models.CASCADE, related_name="offer")
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, related_name="offer")
     redeemed = models.BooleanField(default=False)
     coupons_ordered = models.PositiveIntegerField()
     order_date = models.DateTimeField(auto_now_add=True)

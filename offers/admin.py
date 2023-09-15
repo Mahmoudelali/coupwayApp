@@ -10,9 +10,15 @@ from .models import (
     Feedbacks,
 )
 from orders.models import Order
+from api.forms import OfferAdminForm
 
+
+class OfferAdmin(admin.ModelAdmin):
+    form = OfferAdminForm
+
+
+admin.site.register(Offer, OfferAdmin)
 admin.site.register(OfferDate)
-admin.site.register(Offer)
 admin.site.register(Location)
 admin.site.register(Category)
 admin.site.register(SubCategory)

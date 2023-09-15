@@ -4,31 +4,21 @@ from companies.models import Company, Location
 from django.contrib.auth.models import User
 
 
-# class Subcategory(models.Model):
-#     name = models.CharField(max_length=50)
-
-#     class Meta:
-#         # this goes for plural queryset name in db retrieving
-#         verbose_name_plural = "subcategories"
-
-#     def __str__(self) -> str:
-#         return self.name
+def offer_image_upload_path(instance, filename):
+    print(instance)
+    return f"images/offerspics/{instance}/{filename}"
 
 
-# class Category(models.Model):
-#     name = models.CharField(max_length=50)
-#     Subcategories = models.ForeignKey(Subcategory, on_delete=models.CASCADE, null=True)
-
-#     class Meta:
-#         verbose_name_plural = "categories"
-
-#     def __str__(self) -> str:
-#         return self.name
+def categories_image_upload_path(instance, filename):
+    print(instance)
+    return f"images/offerspics/{instance}/{filename}"
 
 
-# v2
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    category_illustration = models.ImageField(
+        upload_to=categories_image_upload_path, blank=True, null=True
+    )
 
     def __str__(self):
         return self.name
@@ -42,10 +32,6 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return self.name
-
-
-def offer_image_upload_path(instance, filename):
-    return f"images/offerspics/{instance.id}/{filename}"
 
 
 class Offer(models.Model):
@@ -83,6 +69,8 @@ class Offer(models.Model):
 
     def make_order(self, coupons_to_order):
         self.coupons -= int(coupons_to_order)
+        if self.coupons == 0:
+            self.working = False
         self.save()
 
     def __str__(self):

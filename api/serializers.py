@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from offers.models import Offer, OfferDate, Category, Pictures, Feedbacks, SubCategory
 from companies.models import Location, Company
-from orders.models import Order
+
 from registration.models import AdditionalUserInfo
 from django.contrib.auth.models import User
 
@@ -22,16 +22,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdditionalUserInfo
         fields = "__all__"
-
-
-class OrdersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = "__all__"
-
-
-class OrdersListSerializer(serializers.ListSerializer):
-    child = OrdersSerializer()
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -57,7 +47,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ["id", "name", "subcategories"]
+        fields = ["id", "name", "subcategories", "category_illustration"]
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -69,9 +59,6 @@ class LocationSerializer(serializers.ModelSerializer):
 class OffersSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
     company = CompanySerializer()
-    # remaining_coupons = serializers.SerializerMethodField(method_name="")
-
-    # category = CategorySerializer(many=True)
 
     class Meta:
         model = Offer
