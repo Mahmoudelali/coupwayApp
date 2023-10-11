@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from offers.models import Offer, OfferDate, Category, Pictures, Feedbacks, SubCategory
 from companies.models import Location, Company
+from datetime import datetime
 
 from registration.models import AdditionalUserInfo
 from django.contrib.auth.models import User
@@ -98,35 +99,15 @@ class SingleOfferCategory(serializers.ModelSerializer):
 
 
 class SingleOfferSerializer(serializers.ModelSerializer):
-    subcategory_names = serializers.SerializerMethodField()
+    subcategory_names = serializers.SerializerMethodField(method_name='get_subcategory_names')
     location = LocationSerializer()
     company = CompanySerializer()
     category = SingleOfferCategory()
-
     feedback = FeedbackSerializer(many=True, allow_null=True)
 
     class Meta:
         model = Offer
-        fields = [
-            "id",
-            "title",
-            "coupons",
-            "working",
-            "main_picture",
-            "highlights",
-            "compensations",
-            "fine_print",
-            "description",
-            "company",
-            "location",
-            "old_price",
-            "feedback",
-            "new_price",
-            "category",
-            "isVip",
-            "is_unique",
-            "subcategory_names",
-        ]
+        fields = "__all__"
 
     def get_subcategory_names(self, obj):
         return [subcategory.name for subcategory in obj.subcategories.all()]

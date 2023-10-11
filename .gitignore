@@ -1,5 +1,4 @@
 # Django #
-/coupEnv
 *.log
 *.pot
 *.pyc
@@ -98,6 +97,7 @@ celerybeat-schedule.*
 *.sage.py 
 
 # Environments 
+coupEnv/
 .env 
 .venv 
 env/ 

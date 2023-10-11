@@ -28,25 +28,16 @@ class Order(models.Model):
 
     def activate(self):
         self.is_active = True
-        """
-        # Generate the QR code
- 
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
+        try:
+            qr_image = qrcode.make(
+                f"http://192.168.1.4:8000/api/redeemorder/{self.id}/"
             )
-              qr.add_data("https://suckless.org")
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
 
-        # Save the QR code image
-        self.qr_code.save(, img, ContentFile(img.tobytes()))
+            print(qr_image)
+        except Exception as e:
+            print(f"Error generating QR code: {e}")
 
-        """
-        qr_image = qrcode.make(f"localhost:8000/redeemorder/{self.id}/")
-        qr_offset = Image.new("RGB", (410, 410), "white")
+        qr_offset = Image.new("RGB", (400, 400), "white")
         draw_img = ImageDraw.Draw(qr_offset)
         qr_offset.paste(qr_image)
         file_name = f"{self.user_id}.{self.offer_id}.png"

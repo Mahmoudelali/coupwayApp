@@ -34,38 +34,76 @@ class SubCategory(models.Model):
         return self.name
 
 
+class DayOfWeek(models.Model):
+    DAYS_OF_WEEK_CHOICES = [
+        ("monday", "Monday"),
+        ("tuesday", "Tuesday"),
+        ("wednesday", "Wednesday"),
+        ("thursday", "Thursday"),
+        ("friday", "Friday"),
+        ("saturday", "Saturday"),
+        ("sunday", "Sunday"),
+    ]
+    name = models.CharField(
+        max_length=20, choices=DAYS_OF_WEEK_CHOICES, default=DAYS_OF_WEEK_CHOICES
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Month(models.Model):
+    MONTH_CHOICES = [
+        ("january", "January"),
+        ("february", "February"),
+        ("march", "March"),
+        ("april", "April"),
+        ("may", "May"),
+        ("june", "June"),
+        ("july", "July"),
+        ("august", "August"),
+        ("september", "September"),
+        ("october", "October"),
+        ("november", "November"),
+        ("december", "December"),
+    ]
+    name = models.CharField(max_length=20, choices=MONTH_CHOICES, default=MONTH_CHOICES)
+
+    def __str__(self):
+        return self.name
+
+
 class Offer(models.Model):
     title = models.CharField(max_length=250)
     coupons = models.PositiveIntegerField()
-
-    # mark this as false to make the offer unsendable to the mainpage
     working = models.BooleanField(default=True)
     main_picture = models.ImageField(upload_to=offer_image_upload_path)
-
-    # small and detailed description for the offer
     highlights = models.CharField(max_length=300)
     compensations = models.CharField(max_length=500, default="")
     fine_print = models.CharField(max_length=500, default="")
     description = models.TextField(default="")
-
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
-
-    # maybe return the difference of price
     old_price = models.FloatField()
     new_price = models.FloatField()
-
-    # make this a list maybe we need category
-    # category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     subcategories = models.ManyToManyField(SubCategory)
     isVip = models.BooleanField()
-
-    # a single user cannot take multiple coupons of a unique offer
     is_unique = models.BooleanField(default=False)
-
-    # Subcategory connected to the offer
-    # sub = models.ManyToManyField(Subcategory)
+    days_of_week = models.ManyToManyField(
+        "DayOfWeek",
+        blank=True,
+    )
+    months = models.ManyToManyField(
+        "Month",
+        blank=True,
+    )
+    start_time = models.TimeField(
+        blank=True, null=True  # Allow the field to be empty if not specified
+    )
+    end_time = models.TimeField(
+        blank=True, null=True  # Allow the field to be empty if not specified
+    )
 
     def make_order(self, coupons_to_order):
         self.coupons -= int(coupons_to_order)

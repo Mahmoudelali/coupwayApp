@@ -6,7 +6,6 @@ from offers.models import Location, Category
 class Preferences(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     prefered_categories_ids = models.ManyToManyField(Category)
-    # prefered_subcategories_ids = models.ManyToManyField(Subcategory)
 
 
 class AdditionalUserInfo(models.Model):
@@ -14,7 +13,7 @@ class AdditionalUserInfo(models.Model):
     isVip = models.BooleanField(default=False)
     locations_ids = models.ManyToManyField(Location)
     preferences_id = models.OneToOneField(Preferences, on_delete=models.CASCADE)
-
+    
     def make_vip(self):
         self.isVip = True
         self.save()

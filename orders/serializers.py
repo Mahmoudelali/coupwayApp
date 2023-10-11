@@ -4,7 +4,7 @@ from .models import Order
 
 
 class OrdersSerializer(serializers.ModelSerializer):
-    offer = OffersSerializer()
+    offer = OffersSerializer(read_only=True)
     offer_id = serializers.IntegerField(write_only=True)
 
     class Meta:

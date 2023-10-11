@@ -18,14 +18,13 @@ from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics
 from registration.models import AdditionalUserInfo
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from .serializers import (
     OffersSerializer,
     CompanySerializer,
     CategorySerializer,
-    # SubcategorySerializer,
     LocationSerializer,
     OfferDateSerializer,
     UserInfoSerializer,
@@ -42,8 +41,12 @@ def getOffers(request):
     return Response(serializer.data)
 
 
-class SingleOfferView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Offer.objects.all()
+class SingleOfferView(generics.RetrieveAPIView):
+    def get_queryset(self):
+        pk = self.kwargs["pk"]
+        queryset = Offer.objects.filter(id=pk)
+        return queryset
+
     serializer_class = SingleOfferSerializer
 
 
@@ -256,18 +259,16 @@ def createOrder(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 class CreateOrderView(generics.ListCreateAPIView):
     queryset = Order.objects.all()
-    serializer_class = OrdersSerializer
+    serializer_class = OrdersSerializer(many=True)
 
     def post(self, request, format=None):
-        data = request.data  # This should be a list of dictionaries
+        data = request.data
         serializer = OrdersSerializer(data=data, many=True)
         for i in range(len(data)):
-            print(i)
             if serializer.is_valid():
-                print(request.data)
                 offer_id = request.data[i]["offer_id"]
                 offer = Offer.objects.get(id=offer_id)
                 if offer.is_unique and int(request.data[i]["coupons_ordered"]) > 1:
@@ -294,6 +295,7 @@ class CreateOrderView(generics.ListCreateAPIView):
 
 
 @api_view(["GET"])
+@permission_classes([IsAdminUser])
 def redeem_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     if not order.redeemed:
@@ -308,8 +310,7 @@ def redeem_order(request, order_id):
 def activate_order(request, id):
     if request.user.is_superuser:
         order = Order.objects.get(id=id)
-        if not order.is_active:
-            order.activate()
+        order.activate()
         return Response({"message": "Order activated successfuly"})
     return Response({"message": "only admin can activate offers"})
 
@@ -573,5 +574,4 @@ def perform_login(request: Request, user: "AbstractBaseUser") -> Dict[str, Any]:
         )  # noqa: E501 type: rest_registration.auth_token_managers.AbstractAuthTokenManager
         token = auth_token_manager.provide_token(user)
         extra_data["token"] = token
-
     return extra_data
