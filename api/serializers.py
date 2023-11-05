@@ -14,9 +14,9 @@ class OfferDateSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = "__all__"
+    class Meta(object):
+        model = User 
+        fields = ['id', 'username', 'password', 'email']
 
 
 class UserInfoSerializer(serializers.ModelSerializer):

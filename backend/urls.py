@@ -1,19 +1,20 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework.authtoken import views
 from offers.views import index
 from django.conf.urls.static import static
 from django.conf import settings
 from registration.views import CustomAuthToken
+from api.views import signup, LoginView, test_token
 
 
 urlpatterns = [
     path("", index),
     path("admin/", admin.site.urls),
     path("api/", include(("api.urls", "api"), namespace="api")),
-    path("api-token-auth/", CustomAuthToken.as_view()),
-    path("auth/", include("djoser.urls")),
-    path("auth/", include("djoser.urls.authtoken")),
+    re_path("signup", signup),
+    re_path("login", LoginView),
+    re_path("test_token", test_token),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 admin.site.site_header = "My Daily Basket Admin"
