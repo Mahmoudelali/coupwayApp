@@ -90,20 +90,6 @@ class Offer(models.Model):
     subcategories = models.ManyToManyField(SubCategory)
     isVip = models.BooleanField()
     is_unique = models.BooleanField(default=False)
-    days_of_week = models.ManyToManyField(
-        "DayOfWeek",
-        blank=True,
-    )
-    months = models.ManyToManyField(
-        "Month",
-        blank=True,
-    )
-    start_time = models.TimeField(
-        blank=True, null=True  # Allow the field to be empty if not specified
-    )
-    end_time = models.TimeField(
-        blank=True, null=True  # Allow the field to be empty if not specified
-    )
 
     def make_order(self, coupons_to_order):
         self.coupons -= int(coupons_to_order)
@@ -115,6 +101,19 @@ class Offer(models.Model):
         return self.title
 
 
+# offer date is used by the views to determine if an offer is active or not
+class OfferDate(models.Model):
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
+    start_time = models.TimeField(blank=True, default=None)
+    end_time = models.TimeField(blank=True, default=None)
+    month = models.OneToOneField(
+        Month, on_delete=models.CASCADE, blank=True, default=None
+    )
+    day = models.OneToOneField(
+        DayOfWeek, on_delete=models.CASCADE, blank=True, default=None
+    )
+
+
 class Feedbacks(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     offer = models.ForeignKey(Offer, on_delete=models.PROTECT, null=True)
@@ -122,13 +121,6 @@ class Feedbacks(models.Model):
 
     def __str__(self) -> str:
         return self.user.username
-
-
-# offer date is used by the views to determine if an offer is active or not
-class OfferDate(models.Model):
-    offer_id = models.ForeignKey(Offer, on_delete=models.CASCADE)
-    startdate = models.DateTimeField()
-    enddate = models.DateTimeField()
 
 
 # only created in internal offer creation

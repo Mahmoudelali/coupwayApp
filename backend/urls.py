@@ -6,6 +6,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 from registration.views import CustomAuthToken
 from api.views import signup, LoginView, test_token
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -16,7 +18,10 @@ urlpatterns = [
     re_path("login", LoginView),
     re_path("test_token", test_token),
 ]
+
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 admin.site.site_header = "My Daily Basket Admin"
 admin.site.site_title = "Admin Portal"
 admin.site.index_title = "Welcome to MDB admin site"

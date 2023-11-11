@@ -1,38 +1,25 @@
 from django import forms
-from offers.models import Offer
-from django.contrib import admin
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from offers.models import DayOfWeek, Month, Offer , OfferDate
 
 
-class OfferAdmin(admin.ModelAdmin):
-    list_display = (
-        "title",
-        "coupons",
-        ...,
-    )  # Add other fields you want to display in the list view
+class MultiSelectDatepicker(forms.ModelMultipleChoiceField):
+    widget = FilteredSelectMultiple("Days of Week", is_stacked=False)
+
+    def label_from_instance(self, obj):
+        return obj.get_name_display()
+
+
+class TimePicker(forms.TimeInput):
+    input_type = "time"
 
 
 class OfferAdminForm(forms.ModelForm):
+    days_of_week = MultiSelectDatepicker(queryset=DayOfWeek.objects.all())
+    months = MultiSelectDatepicker(queryset=Month.objects.all())
+    start_time = forms.TimeField(widget=TimePicker)
+    end_time = forms.TimeField(widget=TimePicker)
+
     class Meta:
-        model = Offer
-        fields = [
-            "location",
-            "company",
-            "title",
-            "coupons",
-            "working",
-            "main_picture",
-            "highlights",
-            "compensations",
-            "fine_print",
-            "description",
-            "old_price",
-            "new_price",
-            "category",
-            "subcategories",
-            "isVip",
-            "is_unique",
-            "days_of_week",
-            "months",
-            "start_time",
-            "end_time",
-        ]
+        model = OfferDate
+        fields = "__all__"

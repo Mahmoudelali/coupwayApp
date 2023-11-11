@@ -30,7 +30,7 @@ class Order(models.Model):
         self.is_active = True
         try:
             qr_image = qrcode.make(
-                f"http://192.168.1.4:8000/api/redeemorder/{self.id}/"
+                f"http://127.0.0.1:8000/api/redeemorder/{self.id}/"
             )
 
             print(qr_image)
