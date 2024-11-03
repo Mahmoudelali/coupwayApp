@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-4@x_w06^=h2k8lgq_hobkthc6_ap$f3se1$=h6&5130pj8!hlm"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 TIME_ZONE = "Asia/Beirut"
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework.authtoken",
     "rest_framework",
+    "djoser",
     "offers",
     "r_qrcode",
     "orders",

@@ -103,7 +103,7 @@ class Offer(models.Model):
 
 # offer date is used by the views to determine if an offer is active or not
 class OfferDate(models.Model):
-    offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=True)
     start_time = models.TimeField(blank=True, default=None)
     end_time = models.TimeField(blank=True, default=None)
     month = models.OneToOneField(

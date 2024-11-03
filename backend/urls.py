@@ -17,6 +17,12 @@ urlpatterns = [
     re_path("signup", signup),
     re_path("login", LoginView),
     re_path("test_token", test_token),
+    
+]
+urlpatterns += [
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
+
 ]
 
 

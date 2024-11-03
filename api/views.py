@@ -37,7 +37,7 @@ from orders.serializers import OrdersListSerializer, OrdersSerializer
 @api_view(["GET"])
 def getOffers(request):
     products = Offer.objects.filter(working=True)
-    serializer = OffersSerializer(products, many=True)
+    serializer = OffersSerializer(products, many=True, context= { "request" : request})
     return Response(serializer.data)
 
 

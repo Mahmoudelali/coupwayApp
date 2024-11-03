@@ -58,22 +58,18 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class OffersSerializer(serializers.ModelSerializer):
-    location = LocationSerializer()
-    company = CompanySerializer()
+    image_url = serializers.SerializerMethodField()
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.main_picture.url)
+        return obj.image.url  # Fallback if request is not available
 
     class Meta:
         model = Offer
-        fields = [
-            "title",
-            "highlights",
-            "old_price",
-            "new_price",
-            "id",
-            "location",
-            "isVip",
-            "company",
-            "main_picture",
-        ]
+        fields = "__all__"
+        depth = 2
+        
 
 
 class UserSerializer(serializers.ModelSerializer):
