@@ -125,5 +125,5 @@ class Feedbacks(models.Model):
 
 # only created in internal offer creation
 class Pictures(models.Model):
-    parent_offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
+    parent_offer = models.ForeignKey(Offer, on_delete=models.CASCADE , related_name="related_images")
     inner_pic = models.ImageField(upload_to=f"offers/{parent_offer}/")

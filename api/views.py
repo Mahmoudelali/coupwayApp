@@ -4,7 +4,6 @@ from offers.models import (
     Category,
     # Subcategory,
     Location,
-    Pictures,
     Feedbacks,
 )
 from orders.models import Order

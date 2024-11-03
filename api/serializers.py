@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from offers.models import Offer, OfferDate, Category, Pictures, Feedbacks, SubCategory
+from offers.models import Offer, OfferDate, Category, Feedbacks, SubCategory, Pictures
 from companies.models import Location, Company
 from datetime import datetime
 
@@ -7,11 +7,17 @@ from registration.models import AdditionalUserInfo
 from django.contrib.auth.models import User
 
 
+
+class OfferImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pictures
+        fields = "__all__"
+
+
 class OfferDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = OfferDate
         fields = "__all__"
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta(object):
@@ -58,7 +64,9 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class OffersSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
+    
+    related_images = OfferImageSerializer(many=True ,read_only=True)
+    
     def get_image_url(self, obj):
         request = self.context.get('request')
         if request:
@@ -108,8 +116,3 @@ class SingleOfferSerializer(serializers.ModelSerializer):
     def get_subcategory_names(self, obj):
         return [subcategory.name for subcategory in obj.subcategories.all()]
 
-
-class PictureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Pictures
-        fields = "__all__"

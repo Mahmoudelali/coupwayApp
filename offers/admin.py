@@ -9,21 +9,24 @@ from .models import (
     Location,
     Category,
     SubCategory,
-    Pictures,
     OfferDate,
     Feedbacks,
     DayOfWeek,
     Month,
+    Pictures
 )
 
 
 class InlineDate(admin.StackedInline):
     model = OfferDate
+
+
+
+class PictureInline(admin.StackedInline): 
+    model = Pictures
     extra = 1
-
-
 class OfferAdmin(admin.ModelAdmin):
-    inlines = [InlineDate]
+    inlines = [InlineDate ,PictureInline]
 
 
 class OrderAdmin(admin.ModelAdmin):
